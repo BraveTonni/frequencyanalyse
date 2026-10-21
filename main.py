@@ -30,12 +30,14 @@ def count_letters(text: str) -> Counter:
 
 def print_frequencies(freq: Counter, total: int) -> None:
     print("Частота букв:")
+    
     for letter, count in freq.most_common():
         print(f"{letter}: {count} ({count / total:.2%})")
 
 
 def build_layout(freq: Counter) -> KeyboardLayout:
     letters = [letter for letter, _ in freq.most_common()]
+
     return KeyboardLayout(
         index_finger=letters[:12],
         middle_finger=letters[12:18],
@@ -61,3 +63,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
