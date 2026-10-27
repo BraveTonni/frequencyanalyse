@@ -1,27 +1,55 @@
 from collections import Counter
+from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 TEXT_FILE = Path(__file__).parent / "text.txt"
 
 
-class KeyboardLayout:
-    def __init__(self, index_finger: list, middle_finger: list, ring_finger: list, little_finger: list):
-        self.fingers = {
-            "index": index_finger,
-            "middle":  middle_finger,
-            "ring": ring_finger,
-            "little": little_finger
-        }
+@dataclass
+class Finger:
+    name: str
+    letters: list[str]
 
-    def print(self):
-        names = {
-            "index": "Указательный",
-            "middle": "Средний",
-            "ring": "Безымянный",
-            "little": "Мизинец"
-        }
-        for finger, letters in self.fingers.items():
-            print(f"{names[finger]} ({len(letters)}): {', '.join(letters)}")
+    @property
+    def count(self) -> int:
+        return len(self.letters)
+
+    def print(self) -> None:
+        print(f"{self.name} ({self.count}): {', '.join(self.letters)}")
+
+
+@dataclass
+class Fingers:
+    index: Finger
+    middle: Finger
+    ring: Finger
+    little: Finger
+
+    def __iter__(self) -> Iterator[Finger]:
+        return iter((self.index, self.middle, self.ring, self.little))
+
+
+@dataclass
+class KeyboardLayout:
+    fingers: Fingers
+
+    @classmethod
+    def from_frequencies(cls, freq: Counter) -> "KeyboardLayout":
+        letters = [letter for letter, _ in freq.most_common()]
+
+        return cls(
+            fingers=Fingers(
+                index=Finger("Указательный", letters[:12]),
+                middle=Finger("Средний", letters[12:18]),
+                ring=Finger("Безымянный", letters[18:24]),
+                little=Finger("Мизинец", letters[24:33]),
+            )
+        )
+
+    def print(self) -> None:
+        for finger in self.fingers:
+            finger.print()
 
 
 def count_letters(text: str) -> Counter:
@@ -30,20 +58,9 @@ def count_letters(text: str) -> Counter:
 
 def print_frequencies(freq: Counter, total: int) -> None:
     print("Частота букв:")
-    
+
     for letter, count in freq.most_common():
         print(f"{letter}: {count} ({count / total:.2%})")
-
-
-def build_layout(freq: Counter) -> KeyboardLayout:
-    letters = [letter for letter, _ in freq.most_common()]
-
-    return KeyboardLayout(
-        index_finger=letters[:12],
-        middle_finger=letters[12:18],
-        ring_finger=letters[18:24],
-        little_finger=letters[24:33]
-    )
 
 
 def main() -> None:
@@ -58,9 +75,8 @@ def main() -> None:
     print_frequencies(freq, total)
     print()
     print("Раскладка:")
-    build_layout(freq).print()
+    KeyboardLayout.from_frequencies(freq).print()
 
 
 if __name__ == "__main__":
     main()
-
