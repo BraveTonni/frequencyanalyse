@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from frequency import count_letters, print_frequencies
-from layout import KeyboardLayout
+from src.frequency import count_letters, print_frequencies
+from src.layout import KeyboardLayout
 
 TEXT_FILE = Path(__file__).parent / "text.txt"
 
