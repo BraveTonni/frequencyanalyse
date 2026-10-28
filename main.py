@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from analyzer import LetterAnalyzer
-from keyboard import KeyboardBuilder
-from storage import LocalFileStorage
+from src.analyzer import LetterAnalyzer
+from src.keyboard import KeyboardBuilder
+from src.storage import LocalFileStorage
 
 TEXT_FILE = Path(__file__).parent / "text.txt"
 
